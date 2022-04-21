@@ -23,27 +23,34 @@ fn main() {
 
     // Refactor by introducing a function to pull the Strings stored in args vector
     // Pass the reference to args vector to this function
-    let (query, filename) = parse_config(&args);
+    let config = parse_config(&args);
 
-    println!("Searching for {}", query);
-    println!("In file {}", filename);
+    println!("Searching for {}", config.query);
+    println!("In file {}", config.filename);
 
     // Take the text in the file and store it as a string in the variable
     // contents
-    let contents = fs::read_to_string(filename)
+    let contents = fs::read_to_string(config.filename)
                     .expect("Something went wrong reading the file");
     println!("contents of the file are \n {}", contents);
 
 
 }
 
-// Creating functions to isolate functionality and refactoring the code
-// Note query and filename are just references to data stored in the args vector
-// so when they go out of scope at the end of this function we are ok because 
-// the referencces have been passed to the query and filename variables in the
-// main function
-fn parse_config(args: &[String]) -> (&str, &str) {
-    let query = &args[1];
-    let filename = &args[2];
-    (query, filename)
+// We use config struct to group variables query and filename to better describe
+// their relationship
+// fields here will hold "owned" Strings
+struct Config {
+    query: String,
+    filename: String
+}
+
+
+// We will return an instance of Config. But Config is struct of two string feilds
+// so we will clone the strings in the args vector so that the data is copied to
+// struct field
+fn parse_config(args: &[String]) -> Config {
+    let query = args[1].clone();
+    let filename = args[2].clone();
+    Config { query, filename}
 }
