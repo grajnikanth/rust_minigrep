@@ -20,8 +20,10 @@ fn main() {
 
     // Store the vector elements obtained from command line into variables
     // Note we are saving the references in these variables. 
-    let query = &args[1];
-    let filename = &args[2];
+
+    // Refactor by introducing a function to pull the Strings stored in args vector
+    // Pass the reference to args vector to this function
+    let (query, filename) = parse_config(&args);
 
     println!("Searching for {}", query);
     println!("In file {}", filename);
@@ -33,4 +35,15 @@ fn main() {
     println!("contents of the file are \n {}", contents);
 
 
+}
+
+// Creating functions to isolate functionality and refactoring the code
+// Note query and filename are just references to data stored in the args vector
+// so when they go out of scope at the end of this function we are ok because 
+// the referencces have been passed to the query and filename variables in the
+// main function
+fn parse_config(args: &[String]) -> (&str, &str) {
+    let query = &args[1];
+    let filename = &args[2];
+    (query, filename)
 }
