@@ -36,11 +36,7 @@ fn main() {
     println!("Searching for {}", config.query);
     println!("In file {}", config.filename);
 
-    // Take the text in the file and store it as a string in the variable
-    // contents
-    let contents = fs::read_to_string(config.filename)
-                    .expect("Something went wrong reading the file");
-    println!("contents of the file are \n {}", contents);
+    run(config);
 
 
 }
@@ -75,3 +71,12 @@ impl Config {
     }
 }
 
+fn run(config: Config) {
+
+    // Take the text in the file and store it as a string in the variable
+    // contents
+    let contents = fs::read_to_string(config.filename)
+                    .expect("Something went wrong reading the file");
+    println!("contents of the file are \n {}", contents);
+
+}
