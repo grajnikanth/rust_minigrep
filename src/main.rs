@@ -49,6 +49,13 @@ struct Config {
 
 impl Config {
     fn new(args: &[String]) -> Config {
+
+        // Error handling - If sufficient arguments in command line were not 
+        // provided panic and throw an error to user 
+        if args.len() < 3 {
+            panic!("Provide sufficient arguments to query the file");
+        }
+
         let query = args[1].clone();
         let filename = args[2].clone();
         Config { query, filename}
