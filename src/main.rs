@@ -21,9 +21,8 @@ fn main() {
     // Store the vector elements obtained from command line into variables
     // Note we are saving the references in these variables. 
 
-    // Refactor by introducing a function to pull the Strings stored in args vector
-    // Pass the reference to args vector to this function
-    let config = parse_config(&args);
+    // call the new() function on Config to store the query and filename
+    let config = Config::new(&args);
 
     println!("Searching for {}", config.query);
     println!("In file {}", config.filename);
@@ -45,12 +44,14 @@ struct Config {
     filename: String
 }
 
+//Create a new method on config to create instances of Config
+// this new function when called will store the query and filename
 
-// We will return an instance of Config. But Config is struct of two string feilds
-// so we will clone the strings in the args vector so that the data is copied to
-// struct field
-fn parse_config(args: &[String]) -> Config {
-    let query = args[1].clone();
-    let filename = args[2].clone();
-    Config { query, filename}
+impl Config {
+    fn new(args: &[String]) -> Config {
+        let query = args[1].clone();
+        let filename = args[2].clone();
+        Config { query, filename}
+    }
 }
+
