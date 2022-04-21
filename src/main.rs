@@ -8,6 +8,9 @@ use std::env;
 // use fs module to read contents of file
 use std::fs;
 
+// Us the process::exit function to stop the program
+use std::process;
+
 fn main() {
 
     // Take the command line args and save it in a vector called args
@@ -22,7 +25,13 @@ fn main() {
     // Note we are saving the references in these variables. 
 
     // call the new() function on Config to store the query and filename
-    let config = Config::new(&args);
+    // unwrap_or_else() function will return the value inside the Result
+    // type Ok() field if successful if not the error &str is passed as an argument
+    // to the closure function
+    let config = Config::new(&args).unwrap_or_else(|err| {
+        println!("Problem parsing arguments: {}", err);
+        process::exit(1);
+    });
 
     println!("Searching for {}", config.query);
     println!("In file {}", config.filename);
@@ -44,21 +53,25 @@ struct Config {
     filename: String
 }
 
-//Create a new method on config to create instances of Config
-// this new function when called will store the query and filename
+// Create a new method on config to return a Result. Result will allow to handle
+// the errors better in the main function
 
 impl Config {
-    fn new(args: &[String]) -> Config {
+    fn new(args: &[String]) -> Result<Config, &'static str> {
 
         // Error handling - If sufficient arguments in command line were not 
         // provided panic and throw an error to user 
         if args.len() < 3 {
-            panic!("Provide sufficient arguments to query the file");
+            // Return an Err of the type Result. The string literl being 
+            // passed here can be referenced in the main program
+            return Err("Sufficient arguments were not passed")
+            
         }
 
         let query = args[1].clone();
         let filename = args[2].clone();
-        Config { query, filename}
+        // Since we are returning a Result type, wrap the Config in Ok()
+        Ok(Config { query, filename})
     }
 }
 
