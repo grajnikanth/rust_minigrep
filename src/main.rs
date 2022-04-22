@@ -1,3 +1,4 @@
+// Chapter 12 - Rust book project
 // Program to take a string and file name from command line and then
 // do a search for the string in the file and print the results
 
@@ -10,6 +11,9 @@ use std::fs;
 
 // Us the process::exit function to stop the program
 use std::process;
+
+// 
+use std::error::Error;
 
 fn main() {
 
@@ -36,7 +40,14 @@ fn main() {
     println!("Searching for {}", config.query);
     println!("In file {}", config.filename);
 
-    run(config);
+    // Error handling when run() function is used to read the file contents
+    // if let here matches on the run(config) and if it returns an Err then
+    // the value is assigned to "e" variable and we can use that in our function
+    if let Err(e) = run(config) {
+        println!("Application error: {}", e);
+        process::exit(1);
+    }
+    
 
 
 }
@@ -71,12 +82,17 @@ impl Config {
     }
 }
 
-fn run(config: Config) {
+// run() function will have the functionality related to reading the file contents
+// We are using smart pointer Box<> which will store the data in a heap and 
+// provide a reference to this data 
+fn run(config: Config) -> Result<(), Box<dyn Error>> {
 
     // Take the text in the file and store it as a string in the variable
     // contents
-    let contents = fs::read_to_string(config.filename)
-                    .expect("Something went wrong reading the file");
+
+    let contents = fs::read_to_string(config.filename)?;
+                    
     println!("contents of the file are \n {}", contents);
+    Ok(())
 
 }
