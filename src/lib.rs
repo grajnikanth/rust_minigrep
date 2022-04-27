@@ -42,6 +42,7 @@ pub fn run(config: Config) -> Result<(), Box<dyn Error>> {
     let contents = fs::read_to_string(config.filename)?;
                     
     println!("contents of the file are \n {}", contents);
+    
     Ok(())
 
 }
@@ -49,11 +50,32 @@ pub fn run(config: Config) -> Result<(), Box<dyn Error>> {
 // We want the search function to return a vector contianing the 
 // lines which contain the query string
 // We will use str references so we need a lifetime notation. In this case
-// logically it make sense to match the lifetime of the contents which is a vector
+// logically it make sense to match the lifetime of the contents which is a &str
 // containing lines of the text to be searched and we want to return portions of this
 // vector
 pub fn search<'a>(query: &str, contents: &'a str) -> Vec<&'a str> {
-    vec![]
+
+    // Mutable vector is needed to store the results from the for loop
+    let mut results = Vec::new();
+    // .lines() function provides a iterator for each of the line in the 
+    // &str
+    for line in contents.lines() {
+        
+        // contains() method checks if a given string contains the quereied string 
+        // sent as an argument
+        if line.contains(query) {
+            // If the line contains the query store that in the results vector
+            results.push(line);
+
+        }
+    }
+    // results vector is returned. The results vector is defined in this search function
+    // scope but sine it is a reference type, it is borrowed/referenced by the 
+    // returned vector. The result vector will store the memory address of the 
+    // lines in the string contents. So it will will stay in memory until contents
+    // stays in memory. Also we are telling Rust that the returned value has to
+    // stay in memory as long as contents are in the memory
+    results
 }
 
 
@@ -66,10 +88,15 @@ mod tests {
     #[test] 
     fn one_result() {
         let query = "duct";
+        // The first \ makes sure that there is no newline at the begining of the
+        // the text stored in contents variable
+        // Note that the string in the contents variable has to be formatted to 
+        // eliminate the extra spaces in front of each line. Other wise the empty
+        // spaces are also considered to be part of the string/line
         let contents = "\
-        Rust:
-        safe, fast, productive.
-        Pick three.";
+Rust:
+safe, fast, productive.
+Pick three.";
 
         assert_eq!(vec!["safe, fast, productive."], search(query, contents));
     }
