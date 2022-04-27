@@ -41,8 +41,20 @@ pub fn run(config: Config) -> Result<(), Box<dyn Error>> {
 
     let contents = fs::read_to_string(config.filename)?;
                     
-    println!("contents of the file are \n {}", contents);
+   // println!("contents of the file are \n \n {}", contents);
+
+    // call the search function from this run function once the file is loaded
+    // Note that the code won't reach this line if the fie reading errors out
+    // That is because we returning in the first line if error occurs
+
+    // search() funciton returns a vector. Iterate through the vector each line
+    // and print all the lines. These line will be ones containing the query string
     
+    println!("The lines containing the query = {} are", config.query);
+    for line in search(&config.query, &contents) {
+        println!("{}", line);
+    }
+
     Ok(())
 
 }

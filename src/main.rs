@@ -38,8 +38,8 @@ fn main() {
         process::exit(1);
     });
 
-    println!("Searching for {}", config.query);
-    println!("In file {}", config.filename);
+    //println!("Searching for {}", config.query);
+    //println!("In file {}", config.filename);
 
     // Error handling when run() function is used to read the file contents
     // if let here matches on the run(config) and if it returns an Err then
