@@ -90,6 +90,26 @@ pub fn search<'a>(query: &str, contents: &'a str) -> Vec<&'a str> {
     results
 }
 
+pub fn search_case_insensitive<'a>(query: &str, contents: &'a str) -> Vec<&'a str> {
+
+    // To make case insensitive search convert query to lowercase
+    // to_lowercase() function returns a String not a string slice. Note
+    // query was a string slice
+    let query_lower_case = query.to_lowercase();
+    let mut results = Vec::new();
+
+    for line in contents.lines() {
+
+        // convert each line obtained to lower case to do case insensitive search
+        // since query_lower_case is a String instead of a string slice, we need to put
+        // & in front of the query..case because the contains function takes a str slice
+        if line.to_lowercase().contains(&query_lower_case) {
+            results.push(line);
+        }
+    }
+
+    results
+}
 
 // writing tests to check the logic of the code
 #[cfg(test)]
@@ -98,7 +118,7 @@ mod tests {
     use super::*;
 
     #[test] 
-    fn one_result() {
+    fn case_sensitive() {
         let query = "duct";
         // The first \ makes sure that there is no newline at the begining of the
         // the text stored in contents variable
@@ -108,9 +128,23 @@ mod tests {
         let contents = "\
 Rust:
 safe, fast, productive.
-Pick three.";
+Pick three.
+Duct tape.";
 
-        assert_eq!(vec!["safe, fast, productive."], search(query, contents));
+        assert_eq!(vec!["safe, fast, productive."], search(&query, &contents));
+    }
+
+    #[test]
+    fn case_insensitive() {
+        let query = "rUsT";
+        let contents = "\
+Rust:
+safe, fast, productive.
+Pick three.
+Trust me.";
+
+        assert_eq!(vec!["Rust:", "Trust me."], search_case_insensitive(query, contents));
+
     }
 
 }
