@@ -45,3 +45,33 @@ pub fn run(config: Config) -> Result<(), Box<dyn Error>> {
     Ok(())
 
 }
+
+// We want the search function to return a vector contianing the 
+// lines which contain the query string
+// We will use str references so we need a lifetime notation. In this case
+// logically it make sense to match the lifetime of the contents which is a vector
+// containing lines of the text to be searched and we want to return portions of this
+// vector
+pub fn search<'a>(query: &str, contents: &'a str) -> Vec<&'a str> {
+    vec![]
+}
+
+
+// writing tests to check the logic of the code
+#[cfg(test)]
+mod tests {
+    // tests module can access the logic from above
+    use super::*;
+
+    #[test] 
+    fn one_result() {
+        let query = "duct";
+        let contents = "\
+        Rust:
+        safe, fast, productive.
+        Pick three.";
+
+        assert_eq!(vec!["safe, fast, productive."], search(query, contents));
+    }
+
+}
