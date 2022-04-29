@@ -1,12 +1,20 @@
 use std::fs;
 use std::error::Error;
+// We will use the env::var function to obtain the value of the environment variables
+// The user will set the CASE_INSENSITIVE variable to true or false on command
+// line and we will use that value to perform the appropriate search
+use std::env;
+
+// To set the environment use the command
+// $CASE_INSENSITIVE=1
 
 // We use config struct to group variables query and filename to better describe
 // their relationship
 // fields here will hold "owned" Strings
 pub struct Config {
     pub query: String,
-    pub filename: String
+    pub filename: String,
+    pub case_sensitive: bool,
 }
 
 // Create a new method on config to return a Result. Result will allow to handle
@@ -26,8 +34,18 @@ impl Config {
 
         let query = args[1].clone();
         let filename = args[2].clone();
+
+        //env::var function returns a Result with Ok variant = the value of the
+        // environment variable "CASE_INSENSITTIVE". If no value is set, then
+        // it will return Err variant. 
+        // is_err is called on the Result. is_err -> false if CASE_INSESITIVE is set to 
+        // anything becase there is no error
+        // If CASE_INSENSITIVE is not set to anything we have Err and is_err() will 
+        // return true. In this way the case_sensistive value is set to true or false
+        // as intended
+        let case_sensitive = env::var("CASE_INSENSITIVE").is_err();
         // Since we are returning a Result type, wrap the Config in Ok()
-        Ok(Config { query, filename})
+        Ok(Config { query, filename, case_sensitive})
     }
 }
 
@@ -50,8 +68,19 @@ pub fn run(config: Config) -> Result<(), Box<dyn Error>> {
     // search() funciton returns a vector. Iterate through the vector each line
     // and print all the lines. These line will be ones containing the query string
     
+    // Note the syntax below, that there is no ";" after the search() function calls
+    // so this block of code will return the search() function to results variable
+    // if the ";" is removed
+    let results = if config.case_sensitive {
+        search(&config.query, &contents)
+    } else {
+        search_case_insensitive(&config.query, &contents)
+    }; 
+
+
+
     println!("The lines containing the query = {} are", config.query);
-    for line in search(&config.query, &contents) {
+    for line in results {
         println!("{}", line);
     }
 

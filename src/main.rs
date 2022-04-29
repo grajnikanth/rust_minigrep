@@ -34,22 +34,31 @@ fn main() {
     // type Ok() field if successful if not the error &str is passed as an argument
     // to the closure function
     let config = Config::new(&args).unwrap_or_else(|err| {
-        println!("Problem parsing arguments: {}", err);
+        // println! macro does not print errors to the standard error stream
+        // So if you redirect output of this program to a file, the errors are also
+        // redirected to the file. But typically errors should be redirected to 
+        // standard error, we will use eprintln! macro
+        // println!("Problem parsing arguments: {}", err);
+        eprintln!("Problem parsing arguments: {}", err);
+
+        
         process::exit(1);
     });
 
     //println!("Searching for {}", config.query);
     //println!("In file {}", config.filename);
 
-    // Error handling when run() function is used to read the file contents
-    // if let here matches on the run(config) and if it returns an Err then
-    // the value is assigned to "e" variable and we can use that in our function
-
-    // Note that the run function is prefixed with minigrep. I could use the "use"
-    // syntax to bring in the "run" function but it is better to use the the
-    // syntax shown below so that it is clear where the run function is coming from
+     // Error handling when run() function is used to read the file contents
+     // if let here matches on the run(config) and if it returns an Err then
+     // the value is assigned to "e" variable and we can use that in our funct//    
+     // Note that the run function is prefixed with minigrep. I could use the "use"
+     // syntax to bring in the "run" function but it is better to use the the
+     // syntax shown below so that it is clear where the run function is coming from
     if let Err(e) = minigrep::run(config) {
-        println!("Application error: {}", e);
+        
+        //println!("Application error: {}", e);
+        eprintln!("Application error: {}", e);
+        
         process::exit(1);
     }
     
